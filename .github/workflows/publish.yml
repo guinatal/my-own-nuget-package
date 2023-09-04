@@ -10,6 +10,7 @@ on:
 env:
   PROJECT_PATH: My.First.Project/My.First.Project.csproj
   OUTPUT_DIR: ${{ github.workspace }}/output-myfirstproject
+  NUGET_SOURCE_URL: https://nuget.pkg.github.com/guinatal/index.json
 
 jobs:
   publish:
@@ -35,4 +36,4 @@ jobs:
         run: dotnet pack ${{ env.PROJECT_PATH }} -c Release --no-restore --no-build --output ${{ env.OUTPUT_DIR }}
         
       - name: Publish
-        run: dotnet nuget push ${{ env.OUTPUT_DIR }}/*.nupkg --skip-duplicate
+        run: dotnet nuget push ${{ env.OUTPUT_DIR }}/*.nupkg --skip-duplicate --api-key ${{ secrets.GITHUB_TOKEN }} --source ${{ env.NUGET_SOURCE_URL }}
