@@ -1,0 +1,38 @@
+name: publish to nuget
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  PROJECT_PATH: My.First.Project/My.First.Project.csproj
+  OUTPUT_DIR: ${{ github.workspace }}/output-myfirstproject
+
+jobs:
+  publish:
+    name: build, pack & publish
+    runs-on: ubuntu-latest
+    steps:
+    
+      - name: Checkout
+        uses: actions/checkout@v2
+        
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 7.0.x
+          
+      - name: Restore dependencies
+        run: dotnet restore
+        
+      - name: Build
+        run: dotnet build -c Release --no-restore
+        
+      - name: Pack
+        run: dotnet pack ${{ env.PROJECT_PATH }} -c Release --no-restore --no-build --output ${{ env.OUTPUT_DIR }}
+        
+      - name: Publish
+        run: dotnet nuget push ${{ env.OUTPUT_DIR }}/*.nupkg --skip-duplicate
