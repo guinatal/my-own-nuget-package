@@ -19,12 +19,15 @@ jobs:
     steps:
     
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 7.0.x
+          source-url: ${{ env.NUGET_SOURCE_URL }}
+        env:
+            NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
           
       - name: Restore dependencies
         run: dotnet restore
@@ -36,4 +39,4 @@ jobs:
         run: dotnet pack ${{ env.PROJECT_PATH }} -c Release --no-restore --no-build --output ${{ env.OUTPUT_DIR }}
         
       - name: Publish
-        run: dotnet nuget push ${{ env.OUTPUT_DIR }}/*.nupkg --skip-duplicate --api-key ${{ secrets.GITHUB_TOKEN }} --source ${{ env.NUGET_SOURCE_URL }}
+        run: dotnet nuget push ${{ env.OUTPUT_DIR }}/*.nupkg --skip-duplicate
